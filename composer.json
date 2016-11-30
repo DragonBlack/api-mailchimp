@@ -1,0 +1,21 @@
+{
+    "name": "dragonblack/api-mailchimp",
+    "description": "MailChimp API implementation",
+    "type": "library",
+    "require": {
+        "php": "5.4.*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sergey Cheryachukin",
+            "email": "dev.cheryachukin@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4" : {
+            "dragonblack\\apimailchimp\\": "src"
+        }
+    }
+}
