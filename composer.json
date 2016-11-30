@@ -1,5 +1,5 @@
 {
-    "name": "dragonblack/api-mailchimp",
+    "name": "dragonblack/apimailchimp",
     "description": "MailChimp API implementation",
     "type": "library",
     "require": {
