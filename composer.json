@@ -12,6 +12,7 @@
             "email": "dev.cheryachukin@gmail.com"
         }
     ],
+    "minimum-stability": "dev", 77
     "autoload": {
         "psr-4" : {
             "dragonblack\\apimailchimp\\": "src"
