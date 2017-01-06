@@ -94,7 +94,15 @@ class MailChimpResource extends \ArrayIterator {
     public function __call($name, $arguments) {
         if (empty($arguments) || is_scalar($arguments[0])) {
             if (isset($this->_items[$name])) {
-                return empty($arguments) ? $this->_items[$name] : $this->_items[$name][$arguments[0]];
+                if(empty($arguments)){
+                    return $this->_items[$name];
+                }
+
+                if(empty($this->_items[$name][$arguments[0]])){
+                    $data = $this->loadData($this->_links[$name], $arguments[0]);
+                    $this->_items[$name] = [$arguments[0] => new MailChimpResource($data)];
+                }
+                return $this->_items[$name][$arguments[0]];
             }
 
             if (isset($this->_links[$name]) && strtoupper($this->_links[$name]['method']) == 'GET') {
