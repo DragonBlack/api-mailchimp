@@ -34,8 +34,11 @@ class Curl {
     /** @var  Curl */
     protected static $_instance;
 
+    private $_customOptions = [];
+
     protected function __construct() {
-        $this->_ch = curl_init();
+        //$this->_ch = curl_init();
+        $this->clearOptions();
     }
 
     public static function instance() {
@@ -44,6 +47,10 @@ class Curl {
         }
 
         return self::$_instance;
+    }
+
+    protected function clearOptions(){
+        $this->_customOptions = [];
     }
 
     /**
@@ -79,11 +86,14 @@ class Curl {
      * @throws MailChimpException
      */
     public function get() {
-        curl_setopt_array($this->_ch, $this->_options);
+        $this->_ch = curl_init();
+        curl_setopt_array($this->_ch, $this->_options + $this->_customOptions);
         curl_setopt($this->_ch, CURLOPT_URL, $this->_url);
         $this->_lastResult = curl_exec($this->_ch);
         $this->_lastInfo = curl_getinfo($this->_ch);
         $this->_lastError = curl_error($this->_ch);
+        curl_close($this->_ch);
+        $this->clearOptions();
         try {
             $this->_lastResult = json_decode($this->_lastResult, true);
         } catch (\Exception $e) {
@@ -91,7 +101,7 @@ class Curl {
         }
 
         if ($this->_lastInfo['http_code'] != 200 && $this->_lastInfo['http_code'] != 204) {
-            throw new MailChimpException('Error: ' . $this->_lastResult['title'] . '(' . $this->_lastInfo['http_code'] . ') Description: ' . $this->_lastResult['detail']);
+            throw new MailChimpException('Error: ' . $this->_lastResult['title'] . '(' . $this->_lastInfo['http_code'] . ') Description: ' . var_export($this->_lastResult, true));
         }
 
         if (!$this->_lastError) {
@@ -108,8 +118,8 @@ class Curl {
      * @return mixed
      */
     public function post($data) {
-        curl_setopt($this->_ch, CURLOPT_POSTFIELDS, $data);
-        $this->_options[CURLOPT_HTTPHEADER][] = 'Content-Length: ' . strlen($data);
+        $this->_customOptions[CURLOPT_HTTPHEADER][] = 'Content-Length: ' . strlen($data);
+        $this->_customOptions[CURLOPT_POSTFIELDS] = $data;
 
         return $this->get();
     }
@@ -138,7 +148,7 @@ class Curl {
      * @return $this
      */
     public function setOption($code, $value) {
-        curl_setopt($this->_ch, $code, $value);
+        $this->_customOptions[$code] = $value;
 
         return $this;
     }
@@ -168,9 +178,5 @@ class Curl {
      */
     public function getLastError() {
         return $this->_lastError;
-    }
-
-    public function __destruct() {
-        curl_close($this->_ch);
     }
 }
