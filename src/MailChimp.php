@@ -39,4 +39,8 @@ class MailChimp {
 
         throw new MailChimpException('Property "'.$name.'" is not found');
     }
+
+    public function clear(){
+        $this->loadRoot();
+    }
 }

@@ -32,13 +32,15 @@ class MailChimpResource extends \ArrayIterator {
             $this->compileItems($data[$type]);
             unset($data[$type]);
         }
-        $this->_properties = array_map(function ($a) {
-            if (is_array($a)) {
-                return new \ArrayObject($a, \ArrayObject::ARRAY_AS_PROPS);
-            }
+        if(is_array($data)) {
+            $this->_properties = array_map(function ($a) {
+                if (is_array($a)) {
+                    return new \ArrayObject($a, \ArrayObject::ARRAY_AS_PROPS);
+                }
 
-            return $a;
-        }, $data);
+                return $a;
+            }, $data);
+        }
     }
 
     /**
